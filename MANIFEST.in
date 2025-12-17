@@ -1,0 +1,4 @@
+include LICENSE
+include README.md
+recursive-include src/teamdynamix *.py
+include src/teamdynamix/py.typed
