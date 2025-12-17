@@ -1,0 +1,64 @@
+# =====================================================================
+# FILE: pyproject.toml
+# =====================================================================
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "teamdynamix-api"
+version = "0.1.0"
+description = "A Python SDK for the TeamDynamix Web API."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "University of Florida" }]
+keywords = ["teamdynamix", "api", "sdk", "requests", "tdx"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Typing :: Typed",
+]
+dependencies = [
+  "requests>=2.31",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.0",
+  "pytest-cov>=4.1",
+  "ruff>=0.5",
+  "mypy>=1.10",
+  "build>=1.2",
+  "twine>=5.0",
+]
+
+[project.urls]
+Homepage = "https://gitlab.it.ufl.edu/nicholas.linney/teamdynamix-api"
+Repository = "https://gitlab.it.ufl.edu/nicholas.linney/teamdynamix-api"
+"Issue Tracker" = "https://gitlab.it.ufl.edu/nicholas.linney/teamdynamix-api/-/issues"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["teamdynamix*"]
+
+[tool.setuptools.package-data]
+teamdynamix = ["py.typed"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+warn_unused_ignores = true
+ignore_missing_imports = true
+strict = false
