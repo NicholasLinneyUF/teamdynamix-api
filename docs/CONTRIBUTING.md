@@ -175,7 +175,70 @@ Version changes occur only during:
 
 ---
 
-## 9. LLM Contributions
+## 9. Documentation Requirements (Required)
+
+Documentation is a **first-class artifact** of this project.
+
+Any new public-facing code must meet the following requirements before it is
+considered complete.
+
+### New Modules
+
+If you add a new module under `src/teamdynamix/`:
+
+- A matching documentation file **must** exist under:
+
+`docs/teamdynamix/<module_name>.md`
+
+- The doc must describe:
+- Module purpose and scope
+- Whether the module is an API client, internal utility, or script helper
+- Any intentional limitations or non-goals
+
+### Public Classes & Methods
+
+For any new public class or method:
+
+- A docstring is required describing:
+- Purpose
+- Parameters
+- Return type
+- API client methods must clearly document:
+- The TeamDynamix endpoint they map to
+- Any query parameters or payload requirements
+
+### Raw vs Typed Methods
+
+If a module exposes both:
+
+- Raw methods (returning `dict` / `list`)
+- Typed convenience methods (returning DTOs)
+
+Then **both must be documented**, including when one should be preferred over the other.
+
+### Script-Oriented Utilities (`teamdynamix.tools`)
+
+For utilities intended for scripts:
+
+- Documentation must include:
+- Intended usage patterns
+- Explicit non-goals
+- Examples where appropriate
+- Utilities must not:
+- Perform HTTP requests
+- Depend on API client modules
+
+### Documentation Location
+
+All documentation must be discoverable via:
+
+- `docs/INDEX.md`
+
+Undocumented public code may be rejected during review.
+
+---
+
+## 10. LLM Contributions
 
 LLM-assisted contributions are welcome, provided that:
 
@@ -187,7 +250,7 @@ LLMs should be guided using `code_agent.md`.
 
 ---
 
-## 10. Enforcement
+## 11. Enforcement
 
 Maintainers may:
 
@@ -199,7 +262,7 @@ Architectural violations take precedence over functionality.
 
 ---
 
-## 11. Closing Statement
+## 12. Closing Statement
 
 These rules exist to protect the project’s clarity, stability, and longevity.
 
