@@ -23,3 +23,7 @@ config/*
 
 # But keep this specific file
 !config/sample.config.ini
+
+# Data directories
+data/
+data_sources/

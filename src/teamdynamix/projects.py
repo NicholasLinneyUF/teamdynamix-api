@@ -12,13 +12,13 @@ from .transport import PatchPayload
 
 def _as_list(data: Any) -> List[Dict[str, Any]]:
     """
-    Normalize an API response into list[dict].
+    Normalize an API response into a list of dictionaries.
 
     Rules:
-      - None / [] -> []
-      - dict -> [dict]
-      - list -> only dict entries (filters safely)
-      - anything else -> []
+    * None / []   → []
+    * dict        → [dict]
+    * list        → only dict entries (filtering non‑dict items)
+    * otherwise   → []
     """
     if not data:
         return []
@@ -31,12 +31,12 @@ def _as_list(data: Any) -> List[Dict[str, Any]]:
 
 def _as_dict(data: Any) -> Optional[Dict[str, Any]]:
     """
-    Normalize an API response into dict | None.
+    Normalize an API response into a dictionary or ``None``.
 
     Rules:
-      - None / {} -> None
-      - dict -> dict
-      - anything else -> None
+    * None / {}   → None
+    * dict        → dict
+    * otherwise   → None
     """
     if not data:
         return None
@@ -46,11 +46,10 @@ def _as_dict(data: Any) -> Optional[Dict[str, Any]]:
 @dataclass(slots=True)
 class Project:
     """
-    Minimal Project model.
+    Minimal representation of a TeamDynamix Project.
 
-    Keep this intentionally lean: the SDK should stay close to the vendor API
-    surface. If callers need additional fields, they can access raw dicts from
-    response.json() or we can expand this dataclass later with proven needs.
+    The SDK keeps this intentionally lean; callers can use raw dicts when
+    they need the full payload.
     """
     ID: Optional[int] = None
     Name: Optional[str] = None
@@ -71,25 +70,25 @@ class Project:
 
 class Projects:
     """
-    Projects client for TeamDynamix PPM endpoints.
+    Thin client for the TeamDynamix PPM endpoints.
 
-    Pattern: thin endpoint wrapper (keeps vendor API surface recognizable),
-    using Session as the facade and Transport as the sole HTTP boundary.
+    The class follows the same architecture as the rest of the SDK:
+    * All HTTP calls go through :py:meth:`Session.request`.
+    * JSON is fully normalized by helper functions.
+    * No state is stored – the class is just an endpoint wrapper.
     """
-
     _base_path = "/api/projects"
 
     def __init__(self, session: Session):
         self.session = session
 
-    # ---------------------------
-    # Core endpoints
-    # ---------------------------
-
+    # ###################################################################
+    # Core project endpoints
+    # ###################################################################
     def search(self, criteria: Dict[str, Any]) -> List[Project]:
         """
         POST /api/projects/search
-        Returns: list of projects (possibly empty, which is valid).
+        Return a list of projects (empty list is a valid response).
         """
         self.session.log(f"Projects.search: keys={list(criteria.keys())}")
         resp = self.session.request("POST", f"{self._base_path}/search", json=criteria)
@@ -116,9 +115,10 @@ class Projects:
     ) -> Project:
         """
         POST /api/projects
-        Query:
-          notifyNewManager (bool)
-          notifyNewAltManagers (bool)
+
+        Query parameters:
+            notifyNewManager   (bool)
+            notifyNewAltManagers (bool)
         """
         params = {
             "notifyNewManager": str(bool(notify_new_manager)).lower(),
@@ -134,7 +134,7 @@ class Projects:
     def edit(self, project_id: int, updates: Dict[str, Any]) -> Project:
         """
         POST /api/projects/{id}
-        (TDX uses POST for edit on this resource.)
+        (TDX uses POST for edits on this resource.)
         """
         self.session.log(f"Projects.edit: id={project_id}, keys={list(updates.keys())}")
         resp = self.session.request("POST", f"{self._base_path}/{int(project_id)}", json=updates)
@@ -151,14 +151,15 @@ class Projects:
         """
         PATCH /api/projects/{id}
 
-        Accepts:
-          - list[PatchPayload]       -> serialized via .to_dict()
-          - list[dict[str, Any]]     -> passed through unchanged (assumed already RFC6902)
-          - dict[str, Any]           -> passed through; Transport converts dict->JSON Patch list for PATCH
+        ``operations`` may be:
+
+        * ``list[PatchPayload]`` – converted to RFC‑6902 dictionaries
+        * ``list[dict[str, Any]]`` – treated as–is (already RPC‑6902)
+        * ``dict[str, Any]`` – **Transport** converts this to a patch list
         """
         payload: Any
         if isinstance(operations, dict):
-            payload = operations  # Transport converts dict -> patch list (replace ops)
+            payload = operations  # Transport will do the conversion
         elif isinstance(operations, list):
             if all(isinstance(op, PatchPayload) for op in operations):
                 payload = [op.to_dict() for op in operations]
@@ -168,7 +169,6 @@ class Projects:
                 raise TypeError("Projects.patch operations list must be all PatchPayload or all dict.")
         else:
             raise TypeError("Projects.patch operations must be a dict, list[PatchPayload], or list[dict].")
-
         self.session.log(f"Projects.patch: id={project_id}")
         resp = self.session.request("PATCH", f"{self._base_path}/{int(project_id)}", json=payload)
         data = _as_dict(resp.json())
@@ -176,37 +176,27 @@ class Projects:
             raise ValueError("Unexpected response shape from Projects.patch (expected dict).")
         return Project.from_dict(data)
 
-    # ---------------------------
-    # Project Feed endpoints
-    # ---------------------------
-
+    # ###################################################################
+    # Project‑feed endpoints
+    # ###################################################################
     def get_feed(self, project_id: int) -> List[Dict[str, Any]]:
-        """
-        GET /api/projects/{id}/feed
-        Returns [] when empty (valid).
-        """
+        """GET /api/projects/{id}/feed – returns ``[]`` on empty."""
         self.session.log(f"Projects.get_feed: project_id={project_id}")
         resp = self.session.request("GET", f"{self._base_path}/{int(project_id)}/feed")
         return _as_list(resp.json())
 
     def add_feed(self, project_id: int, body: str) -> Dict[str, Any]:
-        """
-        POST /api/projects/{projectId}/feed
-        Body: { "Body": "<string>" }
-        """
+        """POST /api/projects/{projectId}/feed – body: ``{\"Body\": <string>}``."""
         payload = {"Body": body}
         self.session.log(f"Projects.add_feed: project_id={project_id}")
         resp = self.session.request("POST", f"{self._base_path}/{int(project_id)}/feed", json=payload)
         return _as_dict(resp.json()) or {}
 
-    # ---------------------------
+    # ###################################################################
     # Plan / task endpoints
-    # ---------------------------
-
+    # ###################################################################
     def get_plan(self, project_id: int, plan_id: int) -> Optional[Dict[str, Any]]:
-        """
-        GET /api/projects/{projectId}/plans/{planId}
-        """
+        """GET /api/projects/{projectId}/plans/{planId} – ``None`` when no text."""
         self.session.log(f"Projects.get_plan: project_id={project_id}, plan_id={plan_id}")
         resp = self.session.request(
             "GET",
@@ -225,12 +215,13 @@ class Projects:
     ) -> Optional[Dict[str, Any]]:
         """
         POST /api/projects/{projectId}/plans/{planId}/tasks/{taskId}/edit
-        Query:
-          notifyNewResources (bool)
+
+        Query: ``notifyNewResources`` (bool)
         """
         params = {"notifyNewResources": str(bool(notify_new_resources)).lower()}
         self.session.log(
-            f"Projects.edit_task: project_id={project_id}, plan_id={plan_id}, task_id={task_id}, params={params}"
+            f"Projects.edit_task: project_id={project_id}, plan_id={plan_id}, "
+            f"task_id={task_id}, params={params}"
         )
         resp = self.session.request(
             "POST",
@@ -240,15 +231,11 @@ class Projects:
         )
         return _as_dict(resp.json())
 
-    # ---------------------------
-    # Issue feed endpoints
-    # ---------------------------
-
+    # ###################################################################
+    # Issue‑feed endpoints
+    # ###################################################################
     def get_issue_feed(self, project_id: int, issue_id: int) -> List[Dict[str, Any]]:
-        """
-        GET /api/projects/{projectId}/issues/{issueId}/feed
-        Returns [] when empty (valid).
-        """
+        """GET /api/projects/{projectId}/issues/{issueId}/feed – ``[]`` when empty."""
         self.session.log(f"Projects.get_issue_feed: project_id={project_id}, issue_id={issue_id}")
         resp = self.session.request(
             "GET",
@@ -257,14 +244,52 @@ class Projects:
         return _as_list(resp.json())
 
     def add_issue_comment(self, project_id: int, issue_id: int, comment_payload: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        POST /api/projects/{projectId}/issues/{issueId}/feed
-        Body: (per Postman / TDX schema; typically includes "Body")
-        """
+        """POST /api/projects/{projectId}/issues/{issueId}/feed – comment body."""
         self.session.log(f"Projects.add_issue_comment: project_id={project_id}, issue_id={issue_id}")
         resp = self.session.request(
             "POST",
             f"{self._base_path}/{int(project_id)}/issues/{int(issue_id)}/feed",
             json=comment_payload,
         )
+        return _as_dict(resp.json()) or {}
+
+    # ###################################################################
+    # New endpoints – resources
+    # ###################################################################
+    def list_resources(self, project_id: int) -> List[Dict[str, Any]]:
+        """
+        GET /api/projects/{id}/resources
+
+        Returns a list of resource dictionaries (empty list is valid).
+        """
+        self.session.log(f"Projects.list_resources: project_id={project_id}")
+        resp = self.session.request("GET", f"{self._base_path}/{int(project_id)}/resources")
+        return _as_list(resp.json())
+
+    def add_resource(
+        self,
+        project_id: int,
+        resource_uid: str,
+        *,
+        notify_managers: bool = False,
+        notify_resource: bool = False,
+    ) -> Dict[str, Any]:
+        """
+        POST /api/projects/{id}/resources/{resourceUid}
+        Query parameters:
+
+          notifyManagers   (bool, default: False)
+          notifyResource   (bool, default: False)
+
+        Returns the server‑returned payload (a dictionary).  A client that only cares
+        about the side‑effect may ignore the returned value.
+        """
+        params = {
+            "notifyManagers": str(bool(notify_managers)).lower(),
+            "notifyResource": str(bool(notify_resource)).lower(),
+        }
+        path = f"{self._base_path}/{int(project_id)}/resources/{resource_uid}"
+        self.session.log(f"Projects.add_resource: project_id={project_id}, "
+                         f"resource_uid={resource_uid}, params={params}")
+        resp = self.session.request("POST", path, params=(params if any(params.values()) else None))
         return _as_dict(resp.json()) or {}
