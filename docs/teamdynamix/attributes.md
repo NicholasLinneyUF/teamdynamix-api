@@ -69,7 +69,9 @@ Use raw methods when full payload access is required.
 
 A typed representation of an **attribute choice** (selectable option for an attribute).
 
-Fields align with the TeamDynamix API schema as exposed in the Postman collection.
+Fields align with the legacy TeamDynamix schema observed in the Postman
+collection used for the `pre-alpha/11` corpus. OpenAPI verification is deferred
+to `pre-alpha/12`.
 
 #### Fields
 
