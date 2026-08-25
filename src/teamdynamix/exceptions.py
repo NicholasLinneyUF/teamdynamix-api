@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional
 
 
 class TdxError(Exception):
@@ -27,6 +26,10 @@ class HttpError(TdxError):
     url: str
     message: str = ""
     response_text: str = ""
+
+    def __str__(self) -> str:
+        """Return a concise, response-body-free description of the failure."""
+        return self.message or f"HTTP {self.status_code} {self.method.upper()} {self.url}"
 
 
 class TdxTimeoutError(TdxError):

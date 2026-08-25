@@ -72,6 +72,9 @@ You typically do not instantiate exceptions directly (except in tests). They are
 
 - `HttpError` is raised when a response returns a **non-success status code**.
 - The error is intended to be actionable: method + URL + status + any available body.
+- Converting the exception to a string returns its explicit `message`, when set,
+  or a concise `HTTP <status> <method> <URL>` summary. The response body is not
+  included automatically, which avoids leaking sensitive API details into logs.
 
 ------
 
