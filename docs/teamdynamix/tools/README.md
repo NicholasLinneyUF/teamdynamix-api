@@ -18,6 +18,7 @@ tasks that interact with TeamDynamix data.
 ## Modules
 
 - `data_utils` — Canonical path resolution and string normalization helpers
+- `script_utils` — Reusable CLI flags and argument normalization without execution
 - `csv_utils` — Load, query, search, and export CSV data for scripts
 - `sqlite_utils` — Temporary SQLite databases for batch and migration workflows
 

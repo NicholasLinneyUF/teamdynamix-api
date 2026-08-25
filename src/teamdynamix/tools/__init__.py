@@ -14,6 +14,7 @@ automation workflows with predictable local data tooling.
 from __future__ import annotations
 
 from .data_utils import clean_key, clean_str, resolve_data_path
+from .script_utils import build_parser, get_mode, normalize_paths
 
 # CSV utilities
 from .csv_utils import (
@@ -43,6 +44,10 @@ __all__ = [
     "clean_key",
     "clean_str",
     "resolve_data_path",
+    # script_utils
+    "build_parser",
+    "get_mode",
+    "normalize_paths",
     # csv_utils
     "DEFAULT_SEPARATOR_ORD",
     "CsvCellMatch",
