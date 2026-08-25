@@ -278,12 +278,13 @@ to_csv(
 
 ------
 
-## Standard Data Path Resolution
+## Shared Data Path Resolution
 
-### `resolve_data_path(...)`
+Path resolution is provided by the canonical `data_utils` module rather than
+defined by `csv_utils`:
 
 ```python
-from teamdynamix.tools.csv_utils import resolve_data_path
+from teamdynamix.tools import resolve_data_path
 
 path = resolve_data_path("input.csv")
 ```
@@ -291,8 +292,8 @@ path = resolve_data_path("input.csv")
 Resolution order:
 
 1. Absolute path → used directly
-2. `base_dir` argument
-3. Environment variable (`TDX_DATA_DIR`)
+2. Existing candidate beneath `base_dir`
+3. Existing candidate beneath the environment directory (`TDX_DATA_DIR`)
 4. Current working directory
 
 This avoids hard-coding assumptions into scripts.

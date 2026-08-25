@@ -13,6 +13,8 @@ automation workflows with predictable local data tooling.
 
 from __future__ import annotations
 
+from .data_utils import clean_key, clean_str, resolve_data_path
+
 # CSV utilities
 from .csv_utils import (
     DEFAULT_SEPARATOR_ORD,
@@ -22,7 +24,6 @@ from .csv_utils import (
     get_separator_ord,
     load_csv,
     reset_separator_default,
-    resolve_data_path as resolve_csv_data_path,
     set_separator,
     set_separator_ord,
 )
@@ -35,10 +36,13 @@ from .sqlite_utils import (
     archive_db_file,
     backup_db_file,
     create_db_file,
-    resolve_data_path as resolve_sqlite_data_path,
 )
 
 __all__ = [
+    # data_utils
+    "clean_key",
+    "clean_str",
+    "resolve_data_path",
     # csv_utils
     "DEFAULT_SEPARATOR_ORD",
     "CsvCellMatch",
@@ -49,7 +53,6 @@ __all__ = [
     "set_separator_ord",
     "reset_separator_default",
     "load_csv",
-    "resolve_csv_data_path",
     # sqlite_utils
     "DEFAULT_DB_PATH",
     "SqliteCellMatch",
@@ -57,5 +60,4 @@ __all__ = [
     "create_db_file",
     "backup_db_file",
     "archive_db_file",
-    "resolve_sqlite_data_path",
 ]

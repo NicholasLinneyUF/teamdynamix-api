@@ -22,44 +22,13 @@
 
 from __future__ import annotations
 
-import os
 import shutil
 import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple, Union
 
-
-# ---------------------------------------------------------------------
-# Standard data path resolution (unopinionated)
-# ---------------------------------------------------------------------
-def resolve_data_path(
-    relative_or_absolute: Union[str, Path],
-    *,
-    base_dir: Optional[Union[str, Path]] = None,
-    env_var: str = "TDX_DATA_DIR",
-) -> Path:
-    """
-    Resolve a data path in an unopinionated way.
-
-    Rules:
-      - If input is absolute -> return as Path
-      - Else if base_dir provided -> base_dir / input
-      - Else if env var set -> $TDX_DATA_DIR / input
-      - Else -> current working directory / input
-    """
-    p = Path(relative_or_absolute)
-    if p.is_absolute():
-        return p
-
-    if base_dir is not None:
-        return Path(base_dir) / p
-
-    env_base = os.getenv(env_var)
-    if env_base:
-        return Path(env_base) / p
-
-    return Path.cwd() / p
+from .data_utils import resolve_data_path
 
 
 def _maybe_log(logger: Any, message: str, *, level: int = 20, context: Optional[dict] = None) -> None:

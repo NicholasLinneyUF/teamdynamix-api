@@ -85,15 +85,20 @@ This is intentionally **unopinionated**:
 - it works for typical scripts,
 - it is always overrideable.
 
-### `resolve_data_path(...)`
+### Shared path resolution
 
-The module includes a helper that resolves relative paths without hard-coding directory assumptions.
+SQLite functions use the canonical `teamdynamix.tools.data_utils.resolve_data_path`
+helper. User code should prefer the package-level import:
+
+```python
+from teamdynamix.tools import resolve_data_path
+```
 
 Resolution order:
 
 1. absolute path → used directly
-2. `base_dir` argument (if provided)
-3. environment variable (`TDX_DATA_DIR`)
+2. existing candidate beneath `base_dir` (if provided)
+3. existing candidate beneath the environment directory (`TDX_DATA_DIR`)
 4. current working directory
 
 ------
