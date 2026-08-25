@@ -6,41 +6,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Union, cast
 
+from ._response import as_dict as _as_dict
+from ._response import as_list_of_dicts as _as_list
 from .session import Session
 from .transport import PatchPayload
-
-
-def _as_list(data: Any) -> List[Dict[str, Any]]:
-    """
-    Normalize an API response into list[dict].
-
-    Rules:
-      - None / [] -> []
-      - dict -> [dict]
-      - list -> only dict entries (filters safely)
-      - anything else -> []
-    """
-    if not data:
-        return []
-    if isinstance(data, list):
-        return [x for x in data if isinstance(x, dict)]
-    if isinstance(data, dict):
-        return [data]
-    return []
-
-
-def _as_dict(data: Any) -> Optional[Dict[str, Any]]:
-    """
-    Normalize an API response into dict | None.
-
-    Rules:
-      - None / {} -> None
-      - dict -> dict
-      - anything else -> None
-    """
-    if not data:
-        return None
-    return data if isinstance(data, dict) else None
 
 
 @dataclass(slots=True)
