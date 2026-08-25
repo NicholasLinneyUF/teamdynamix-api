@@ -6,17 +6,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
+from ._response import as_list_of_dicts as _as_list_of_dicts
 from .session import Session
-
-
-def _as_list_of_dicts(data: Any) -> List[Dict[str, Any]]:
-    if not data:
-        return []
-    if isinstance(data, list):
-        return [x for x in data if isinstance(x, dict)]
-    if isinstance(data, dict):
-        return [data]
-    return []
 
 
 @dataclass(slots=True)

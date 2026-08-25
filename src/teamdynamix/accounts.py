@@ -6,35 +6,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
+from ._response import as_list_of_dicts as _as_list_of_dicts
+from ._response import first_dict_or_none as _first_or_none
 from .session import Session
-
-
-def _first_or_none(data: Any) -> Optional[Dict[str, Any]]:
-    """
-    TDX endpoints sometimes return:
-      - object (dict)
-      - list[dict]
-      - empty list []
-    Normalize to first dict or None.
-    """
-    if data is None:
-        return None
-    if isinstance(data, list):
-        if not data:
-            return None
-        first = data[0]
-        return first if isinstance(first, dict) else None
-    return data if isinstance(data, dict) else None
-
-
-def _as_list_of_dicts(data: Any) -> List[Dict[str, Any]]:
-    if not data:
-        return []
-    if isinstance(data, list):
-        return [x for x in data if isinstance(x, dict)]
-    if isinstance(data, dict):
-        return [data]
-    return []
 
 
 @dataclass(slots=True)
