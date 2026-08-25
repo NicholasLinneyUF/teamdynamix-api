@@ -167,6 +167,34 @@ Returns:
 
 ------
 
+## Fingerprint metadata
+
+`write_fingerprint_to_db(db, fingerprint)` persists a `FileFingerprint` in a
+dedicated `meta(key TEXT PRIMARY KEY, value TEXT NOT NULL)` table. The `db`
+argument may be a path or an existing `sqlite3.Connection`; writes are committed
+in either case, and caller-owned connections remain open.
+
+`read_fingerprint_from_db(db)` reconstructs the fingerprint when every required
+metadata key is present, or returns `None` for a missing or incomplete record.
+Tuple fields are encoded as JSON arrays so their order survives a round trip.
+
+```python
+from teamdynamix.tools import (
+    compute_fingerprint,
+    read_fingerprint_from_db,
+    write_fingerprint_to_db,
+)
+
+fingerprint = compute_fingerprint("input.csv")
+write_fingerprint_to_db("tracker.sqlite", fingerprint)
+assert read_fingerprint_from_db("tracker.sqlite") == fingerprint
+```
+
+These functions provide persistence only. Comparison and mismatch policy remain
+in `teamdynamix.tools.data_utils`.
+
+------
+
 ## `SqliteTracker` Class
 
 `SqliteTracker` is the main interface for:

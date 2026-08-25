@@ -48,6 +48,8 @@ from .sqlite_utils import (
     archive_db_file,
     backup_db_file,
     create_db_file,
+    read_fingerprint_from_db,
+    write_fingerprint_to_db,
 )
 
 __all__ = [
@@ -83,4 +85,6 @@ __all__ = [
     "create_db_file",
     "backup_db_file",
     "archive_db_file",
+    "write_fingerprint_to_db",
+    "read_fingerprint_from_db",
 ]

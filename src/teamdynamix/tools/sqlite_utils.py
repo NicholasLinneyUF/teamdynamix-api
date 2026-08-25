@@ -22,13 +22,112 @@
 
 from __future__ import annotations
 
+import json
 import shutil
 import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple, Union
 
-from .data_utils import resolve_data_path as _resolve_data_path
+from .data_utils import FileFingerprint, resolve_data_path as _resolve_data_path
+
+
+_FINGERPRINT_META_KEYS = {
+    "fingerprint_algorithm",
+    "fingerprint_fields",
+    "fingerprint_version",
+    "fingerprint_path",
+    "fingerprint_file_sha256",
+    "fingerprint_mtime_ns",
+    "fingerprint_row_count",
+    "fingerprint_columns_json",
+}
+_REQUIRED_FINGERPRINT_META_KEYS = _FINGERPRINT_META_KEYS - {"fingerprint_version"}
+
+
+def _open_fingerprint_db(
+    db: str | Path | sqlite3.Connection,
+) -> tuple[sqlite3.Connection, bool]:
+    if isinstance(db, sqlite3.Connection):
+        return db, False
+    path = _resolve_data_path(db)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    return sqlite3.connect(str(path)), True
+
+
+def _ensure_meta_table(conn: sqlite3.Connection) -> None:
+    conn.execute('CREATE TABLE IF NOT EXISTS "meta" (key TEXT PRIMARY KEY, value TEXT NOT NULL)')
+
+
+def write_fingerprint_to_db(
+    db: str | Path | sqlite3.Connection,
+    fingerprint: FileFingerprint,
+) -> None:
+    """Persist a fingerprint in the database's key/value ``meta`` table."""
+    conn, owns_connection = _open_fingerprint_db(db)
+    try:
+        _ensure_meta_table(conn)
+        values = {
+            "fingerprint_algorithm": fingerprint.algorithm,
+            "fingerprint_fields": json.dumps(fingerprint.fingerprint_fields),
+            "fingerprint_path": fingerprint.path,
+            "fingerprint_file_sha256": fingerprint.file_sha256,
+            "fingerprint_mtime_ns": str(fingerprint.mtime_ns),
+            "fingerprint_row_count": str(fingerprint.row_count),
+            "fingerprint_columns_json": json.dumps(fingerprint.columns),
+        }
+        conn.executemany(
+            'INSERT INTO "meta" (key, value) VALUES (?, ?) '
+            'ON CONFLICT(key) DO UPDATE SET value = excluded.value',
+            values.items(),
+        )
+        if fingerprint.fingerprint_version is None:
+            conn.execute('DELETE FROM "meta" WHERE key = ?', ("fingerprint_version",))
+        else:
+            conn.execute(
+                'INSERT INTO "meta" (key, value) VALUES (?, ?) '
+                'ON CONFLICT(key) DO UPDATE SET value = excluded.value',
+                ("fingerprint_version", fingerprint.fingerprint_version),
+            )
+        conn.commit()
+    finally:
+        if owns_connection:
+            conn.close()
+
+
+def read_fingerprint_from_db(
+    db: str | Path | sqlite3.Connection,
+) -> FileFingerprint | None:
+    """Load a complete fingerprint from ``meta``, or return ``None`` if incomplete."""
+    conn, owns_connection = _open_fingerprint_db(db)
+    try:
+        _ensure_meta_table(conn)
+        rows = conn.execute(
+            f'SELECT key, value FROM "meta" WHERE key IN ({", ".join("?" for _ in _FINGERPRINT_META_KEYS)})',
+            tuple(_FINGERPRINT_META_KEYS),
+        ).fetchall()
+        values = {str(key): str(value) for key, value in rows}
+        if not _REQUIRED_FINGERPRINT_META_KEYS.issubset(values):
+            return None
+        fields = json.loads(values["fingerprint_fields"])
+        columns = json.loads(values["fingerprint_columns_json"])
+        if not isinstance(fields, list) or not all(isinstance(item, str) for item in fields):
+            raise ValueError("fingerprint_fields must be a JSON array of strings")
+        if not isinstance(columns, list) or not all(isinstance(item, str) for item in columns):
+            raise ValueError("fingerprint_columns_json must be a JSON array of strings")
+        return FileFingerprint(
+            path=values["fingerprint_path"],
+            algorithm=values["fingerprint_algorithm"],
+            file_sha256=values["fingerprint_file_sha256"],
+            mtime_ns=int(values["fingerprint_mtime_ns"]),
+            row_count=int(values["fingerprint_row_count"]),
+            columns=tuple(columns),
+            fingerprint_fields=tuple(fields),
+            fingerprint_version=values.get("fingerprint_version"),
+        )
+    finally:
+        if owns_connection:
+            conn.close()
 
 
 def _maybe_log(logger: Any, message: str, *, level: int = 20, context: Optional[dict] = None) -> None:
