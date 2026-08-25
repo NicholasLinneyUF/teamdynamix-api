@@ -1,7 +1,7 @@
 # =====================================================================
-# FILE: tests/test_ticket_endpoints.py
+# FILE: examples/live/ticket_endpoints.py
 #
-# Minimal endpoint test script for Tickets API client.
+# Manual live-endpoint exercise for the Tickets API client.
 # - Assumes your config is valid at ./config/sandbox.config.ini (adjust as needed).
 # - Assumes you have implemented: Tickets, TicketPriorities, TicketStatuses, TicketSources, TicketTypes.
 # - Assumes PATCH JSON Patch handling is centralized in Transport (dict -> JSON Patch list).

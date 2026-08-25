@@ -1,7 +1,7 @@
 # =====================================================================
-# FILE: test_people_endpoints.py
+# FILE: examples/live/people_endpoints.py
 #
-# Minimal endpoint test script for People API client.
+# Manual live-endpoint exercise for the People API client.
 # - Assumes your config is valid at ./config/sandbox.config.ini (adjust as needed).
 # - Uses the library as currently implemented: Session + People + Person.
 # =====================================================================
