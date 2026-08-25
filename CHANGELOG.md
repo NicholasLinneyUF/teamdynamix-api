@@ -14,6 +14,12 @@ Python distribution metadata uses the PEP 440 equivalent `0.0.0a11`.
   application filters.
 - `AttributeChoice` and raw/typed Attributes response patterns.
 - `teamdynamix.tools` CSV and SQLite helpers for local automation scripts.
+- Canonical `data_utils` path and string-normalization helpers, exported through
+  `teamdynamix.tools`.
+- Neutral `script_utils` helpers for baseline CLI flags, deterministic mode
+  selection, and path normalization without workflow execution.
+- A distinct `ToolsError` hierarchy for local path, fingerprint, and migration
+  state failures.
 - Script-specific logger filename prefixes exposed through `Session`.
 - README, MIT license, PEP 561 marker, deterministic core tests, and built-wheel
   import smoke tests.
@@ -25,6 +31,8 @@ Python distribution metadata uses the PEP 440 equivalent `0.0.0a11`.
 - Reclassified live, state-changing endpoint scripts as manual examples.
 - Corrected package project URLs to GitHub and aligned release branch guidance
   with the project promotion model.
+- Removed duplicate and legacy `resolve_data_path` implementations and exports;
+  the canonical implementation now lives in `teamdynamix.tools.data_utils`.
 - Set an honest 35% coverage floor; the release suite currently exceeds it.
 
 ### Fixed
