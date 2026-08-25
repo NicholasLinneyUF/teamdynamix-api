@@ -13,7 +13,18 @@ automation workflows with predictable local data tooling.
 
 from __future__ import annotations
 
-from .data_utils import clean_key, clean_str, resolve_data_path
+from .data_utils import (
+    DEFAULT_FINGERPRINT_FIELDS,
+    FileFingerprint,
+    FingerprintDiff,
+    assert_fingerprint_match,
+    clean_key,
+    clean_str,
+    compare_fingerprint,
+    compute_fingerprint,
+    fingerprints_match,
+    resolve_data_path,
+)
 from .script_utils import build_parser, get_mode, normalize_paths
 
 # CSV utilities
@@ -44,6 +55,13 @@ __all__ = [
     "clean_key",
     "clean_str",
     "resolve_data_path",
+    "DEFAULT_FINGERPRINT_FIELDS",
+    "FileFingerprint",
+    "FingerprintDiff",
+    "compute_fingerprint",
+    "compare_fingerprint",
+    "fingerprints_match",
+    "assert_fingerprint_match",
     # script_utils
     "build_parser",
     "get_mode",
