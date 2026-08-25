@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Sequence, Union
+from typing import Any, Dict, List, Optional, Union, cast
 
 from .session import Session
 from .transport import PatchPayload
@@ -161,7 +161,7 @@ class Projects:
             payload = operations  # Transport converts dict -> patch list (replace ops)
         elif isinstance(operations, list):
             if all(isinstance(op, PatchPayload) for op in operations):
-                payload = [op.to_dict() for op in operations]
+                payload = [cast(PatchPayload, op).to_dict() for op in operations]
             elif all(isinstance(op, dict) for op in operations):
                 payload = operations
             else:

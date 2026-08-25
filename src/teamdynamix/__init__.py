@@ -1,7 +1,7 @@
 # src/teamdynamix/__init__.py
 from __future__ import annotations
 
-__version__ = "0.0.0-pre-alpha.11"
+__version__ = "0.0.0a11"
 
 # Exceptions (public)
 from .exceptions import (
