@@ -26,6 +26,7 @@ from .data_utils import (
     resolve_data_path,
 )
 from .script_utils import build_parser, get_mode, normalize_paths
+from .migration_utils import MigrationMode, MigrationTable, prepare_sqlite_tracker
 
 # CSV utilities
 from .csv_utils import (
@@ -68,6 +69,10 @@ __all__ = [
     "build_parser",
     "get_mode",
     "normalize_paths",
+    # migration_utils
+    "MigrationMode",
+    "MigrationTable",
+    "prepare_sqlite_tracker",
     # csv_utils
     "DEFAULT_SEPARATOR_ORD",
     "CsvCellMatch",
