@@ -45,6 +45,10 @@ from teamdynamix.exceptions import (
     HttpError,
     TdxTimeoutError,
     TdxRequestError,
+    ToolsError,
+    FingerprintMismatchError,
+    MigrationStateError,
+    DataPathError,
 )
 ```
 
@@ -75,6 +79,19 @@ You typically do not instantiate exceptions directly (except in tests). They are
 - Converting the exception to a string returns its explicit `message`, when set,
   or a concise `HTTP <status> <method> <URL>` summary. The response body is not
   included automatically, which avoids leaking sensitive API details into logs.
+
+### Local tools exceptions
+
+`ToolsError` is intentionally separate from `TdxError`. It represents local
+data, migration, and workflow-integrity failures rather than API or transport
+faults. All tools exceptions accept a message and optional structured `details`.
+
+| Exception                      | Intended use                                      |
+| ------------------------------ | ------------------------------------------------- |
+| `ToolsError`                   | Catch-all for local tools/workflow failures       |
+| `FingerprintMismatchError`     | Incompatible input or stored fingerprints         |
+| `MigrationStateError`          | Missing, unsafe, or incompatible migration state  |
+| `DataPathError`                | Required path resolution or validation failure    |
 
 ------
 
@@ -115,6 +132,13 @@ Specific subclasses include:
 - `HttpError` — HTTP non-success responses (structured dataclass)
 - `TdxTimeoutError` — request timeout
 - `TdxRequestError` — non-timeout transport errors (connection failures, etc.)
+
+The separate local-tools hierarchy includes:
+
+- `ToolsError` — base for tooling and workflow-integrity failures
+- `FingerprintMismatchError` — unsafe fingerprint mismatch
+- `MigrationStateError` — invalid migration/tracker state
+- `DataPathError` — required local path failure
 
 ### Common catching patterns
 

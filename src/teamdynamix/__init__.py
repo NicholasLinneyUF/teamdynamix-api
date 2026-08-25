@@ -11,6 +11,10 @@ from .exceptions import (
     HttpError,
     TdxTimeoutError,
     TdxRequestError,
+    ToolsError,
+    FingerprintMismatchError,
+    MigrationStateError,
+    DataPathError,
 )
 
 # Core
@@ -48,6 +52,10 @@ __all__ = [
     "HttpError",
     "TdxTimeoutError",
     "TdxRequestError",
+    "ToolsError",
+    "FingerprintMismatchError",
+    "MigrationStateError",
+    "DataPathError",
     # Core
     "Config",
     "Logger",
