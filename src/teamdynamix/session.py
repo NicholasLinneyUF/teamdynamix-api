@@ -3,19 +3,19 @@
 # =====================================================================
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any, Dict, Optional, Union, Literal, Mapping
+from typing import Any, Literal
 
 from .auth import Auth
-from .config import Config, AuthMode
+from .config import AuthMode, Config
+from .exceptions import ConfigError
 from .logger import Logger
 from .transport import Transport
-from .exceptions import ConfigError
-
 
 TdxEnvironment = Literal["TD", "SBTD"]
-ConfigSource = Union[str, Path, Config, Mapping[str, Any], None]
+ConfigSource = str | Path | Config | Mapping[str, Any] | None
 
 
 class Session:
@@ -26,19 +26,21 @@ class Session:
       - config may be: path | Config | dict-like overlay | None
       - overrides may be: dict of key-value pairs applied after base config
       - auth_mode/environment can be overridden explicitly (validated literals)
+      - name_prefix customizes the session log filename prefix
     """
 
     def __init__(
         self,
         config: ConfigSource = "./config/config.ini",
         *,
-        auth_mode: Optional[AuthMode] = None,
-        environment: Optional[TdxEnvironment] = None,
-        overrides: Optional[Mapping[str, Any]] = None,
-    ):
+        auth_mode: AuthMode | None = None,
+        environment: TdxEnvironment | None = None,
+        overrides: Mapping[str, Any] | None = None,
+        name_prefix: str | None = None,
+    ) -> None:
         # 1) Resolve base config
-        base_cfg: Optional[Config] = None
-        overlay: Dict[str, Any] = {}
+        base_cfg: Config | None = None
+        overlay: dict[str, Any] = {}
 
         if config is None:
             # default behavior: load from default ini path
@@ -56,7 +58,7 @@ class Session:
 
         # 2) Merge overlays in correct precedence order:
         #    base_cfg < config-mapping (if provided) < overrides < explicit keyword overrides
-        merged: Dict[str, Any] = {}
+        merged: dict[str, Any] = {}
         if base_cfg is not None:
             merged.update(asdict(base_cfg))
 
@@ -79,7 +81,7 @@ class Session:
         # 3) Build Config once (single validation point)
         #    ConfigError should only occur here if required fields remain missing/invalid.
         try:
-            self.config = Config(**merged)  # type: ignore[arg-type]
+            self.config = Config(**merged)
         except TypeError as e:
             # Common cause: unknown key in overrides dict
             raise ConfigError(f"Invalid configuration keys provided: {e}") from e
@@ -89,6 +91,7 @@ class Session:
             log_dir=self.config.log_dir,
             level=self.config.log_level,
             console=self.config.log_console,
+            name_prefix=name_prefix or "log",
         )
 
         self.transport = Transport(
@@ -118,7 +121,7 @@ class Session:
         """
         return self.auth.authenticate()
 
-    def auth_header(self) -> Dict[str, str]:
+    def auth_header(self) -> dict[str, str]:
         token = self.auth.get_token()
         return {"Authorization": f"Bearer {token}"}
 

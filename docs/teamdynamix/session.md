@@ -65,17 +65,31 @@ Session(
     auth_mode: Literal["admin", "user"] | None = None,
     environment: Literal["TD", "SBTD"] | None = None,
     overrides: Mapping[str, Any] | None = None,
+    name_prefix: str | None = None,
 )
 ```
 
 ### Parameters
 
-| Name          | Type                                | Description                   |
-| ------------- | ----------------------------------- | ----------------------------- |
-| `config`      | path \| `Config` | mapping | `None` | Base configuration source     |
-| `auth_mode`   | `"admin"` | `"user"` | `None`       | Explicit auth mode override   |
-| `environment` | `"TD"` | `"SBTD"` | `None`          | Explicit environment override |
-| `overrides`   | `Mapping[str, Any] | None`          | Late-applied config overrides |
+| Name          | Type                               | Description                                      |
+| ------------- | ---------------------------------- | ------------------------------------------------ |
+| `config`      | `ConfigSource`                     | Base configuration source                        |
+| `auth_mode`   | `AuthMode | None`                  | Explicit auth mode override                      |
+| `environment` | `TdxEnvironment | None`            | Explicit environment override                    |
+| `overrides`   | `Mapping[str, Any] | None`         | Late-applied config overrides                    |
+| `name_prefix` | `str | None`                       | Log filename prefix; defaults to `"log"`        |
+
+To identify the log files created by a particular script, provide a prefix at
+construction time:
+
+```python
+from teamdynamix import Session
+
+session = Session("./config/config.ini", name_prefix="log-mytool")
+```
+
+The session forwards the value to its `Logger`, producing filenames such as
+`log-mytool-20260825153000.txt`.
 
 ------
 
@@ -175,6 +189,7 @@ self.logger = Logger(
     log_dir=self.config.log_dir,
     level=self.config.log_level,
     console=self.config.log_console,
+    name_prefix=name_prefix or "log",
 )
 ```
 

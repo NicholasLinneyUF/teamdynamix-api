@@ -3,13 +3,11 @@
 # =====================================================================
 from __future__ import annotations
 
-from pathlib import Path
-from typing import List, Optional
 import threading
 import time
+from pathlib import Path
 
 from .event import Event
-
 
 _LEVELS = {
     "CRITICAL": 50,
@@ -25,7 +23,7 @@ class Logger:
     """
     Minimal logger:
     - Keeps an in-memory list of Event objects
-    - Writes to a timestamped file under log_dir
+    - Writes to a ``<name_prefix>-<timestamp>.txt`` file under log_dir
     - Prints to console (optional)
     - Default level behavior: ERROR (catches errors/exceptions, ignores warnings)
     """
@@ -35,9 +33,9 @@ class Logger:
         level: str = "ERROR",
         console: bool = True,
         name_prefix: str = "log",
-    ):
+    ) -> None:
         self._lock = threading.RLock()
-        self.events: List[Event] = []
+        self.events: list[Event] = []
 
         self.level_name = (level or "ERROR").strip().upper()
         self.level = _LEVELS.get(self.level_name, 40)
@@ -49,7 +47,7 @@ class Logger:
         self.log_file = self.log_dir / f"{name_prefix}-{ts}.txt"
         self.console = bool(console)
 
-    def log(self, message: str, level: int | None = None, context: Optional[dict] = None) -> None:
+    def log(self, message: str, level: int | None = None, context: dict | None = None) -> None:
         lvl = self.level if level is None else int(level)
 
         # Filter: only record if lvl >= configured level
