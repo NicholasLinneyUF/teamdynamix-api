@@ -28,7 +28,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple, Union
 
-from .data_utils import resolve_data_path
+from .data_utils import resolve_data_path as _resolve_data_path
 
 
 def _maybe_log(logger: Any, message: str, *, level: int = 20, context: Optional[dict] = None) -> None:
@@ -92,7 +92,7 @@ def create_db_file(
     - Ensures parent directory exists.
     - Does not create tables; those are created when you initialize the tracker.
     """
-    p = resolve_data_path(db_path)
+    p = _resolve_data_path(db_path)
     p.parent.mkdir(parents=True, exist_ok=True)
 
     if p.exists() and overwrite:
@@ -121,11 +121,11 @@ def backup_db_file(
     Override:
       - pass backup_path for a custom destination.
     """
-    src = resolve_data_path(db_path)
+    src = _resolve_data_path(db_path)
     if not src.exists():
         raise FileNotFoundError(f"Database file does not exist: {src}")
 
-    dst = resolve_data_path(backup_path) if backup_path is not None else Path(str(src) + ".bak")
+    dst = _resolve_data_path(backup_path) if backup_path is not None else Path(str(src) + ".bak")
     dst.parent.mkdir(parents=True, exist_ok=True)
 
     _maybe_log(logger, "sqlite_utils.backup_db_file", context={"src": str(src), "dst": str(dst)})
@@ -147,7 +147,7 @@ def archive_db_file(
     Returns:
       (backup_path, new_db_path)
     """
-    src = resolve_data_path(db_path)
+    src = _resolve_data_path(db_path)
     bak = backup_db_file(src, backup_path=backup_path, logger=logger)
     new_db = create_db_file(src, overwrite=True, logger=logger)
     return (bak, new_db)
@@ -176,7 +176,7 @@ class SqliteTracker:
         *,
         logger: Any = None,
     ):
-        self.db_path = resolve_data_path(db_path)
+        self.db_path = _resolve_data_path(db_path)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
 
         self._conn: Optional[sqlite3.Connection] = None

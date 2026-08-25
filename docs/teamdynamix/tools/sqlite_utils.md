@@ -88,7 +88,8 @@ This is intentionally **unopinionated**:
 ### Shared path resolution
 
 SQLite functions use the canonical `teamdynamix.tools.data_utils.resolve_data_path`
-helper. User code should prefer the package-level import:
+helper internally through a private alias. `sqlite_utils` does not re-export the
+helper; user code should prefer the package-level import:
 
 ```python
 from teamdynamix.tools import resolve_data_path

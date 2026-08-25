@@ -27,6 +27,15 @@ Use the package-level imports for shared helpers:
 from teamdynamix.tools import clean_key, clean_str, resolve_data_path
 ```
 
+## Shared helper import contract
+
+- Canonical implementation: `teamdynamix.tools.data_utils.resolve_data_path`
+- Preferred user import: `from teamdynamix.tools import resolve_data_path`
+- `csv_utils` and `sqlite_utils` do not define or re-export path helpers
+
+Keeping one implementation prevents behavior drift between CSV, SQLite, and
+future script utilities.
+
 ## When to use tools vs SDK clients
 
 Use `teamdynamix.tools` when:
