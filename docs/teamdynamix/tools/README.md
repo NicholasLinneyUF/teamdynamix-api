@@ -17,8 +17,15 @@ tasks that interact with TeamDynamix data.
 
 ## Modules
 
+- `data_utils` — Canonical path resolution and string normalization helpers
 - `csv_utils` — Load, query, search, and export CSV data for scripts
 - `sqlite_utils` — Temporary SQLite databases for batch and migration workflows
+
+Use the package-level imports for shared helpers:
+
+```python
+from teamdynamix.tools import clean_key, clean_str, resolve_data_path
+```
 
 ## When to use tools vs SDK clients
 
