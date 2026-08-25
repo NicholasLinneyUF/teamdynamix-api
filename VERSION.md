@@ -20,8 +20,11 @@ planned for Pre-Alpha 12.
 
 - Expanded the `Attributes` client with attribute-choice lifecycle operations,
   custom-attribute discovery, raw response methods, and typed wrappers.
-- Added the first `teamdynamix.tools` package with pandas-backed CSV helpers and
-  SQLite tracking utilities for local scripts.
+- Added the first `teamdynamix.tools` package with pandas-backed CSV helpers,
+  SQLite tracking utilities, canonical data-path/string helpers, and neutral
+  command-line parser scaffolding for local scripts.
+- Added a distinct local-workflow exception hierarchy: `ToolsError`,
+  `FingerprintMismatchError`, `MigrationStateError`, and `DataPathError`.
 - Preserved the established `Session` / `Transport` / `Auth` architecture and
   centralized JSON Patch handling.
 - Added concise `HttpError` string output without automatically exposing
@@ -31,8 +34,8 @@ planned for Pre-Alpha 12.
 ## Release stabilization
 
 - Added deterministic tests for Session, Transport, Auth, Attributes, logging,
-  exceptions, and distribution artifacts; no live tenant credentials are
-  required.
+  exceptions, shared data helpers, script CLI parsing, tools import contracts,
+  and distribution artifacts; no live tenant credentials are required.
 - Reclassified state-changing endpoint exercises as manual examples.
 - Added build/install smoke coverage for both `teamdynamix` and
   `teamdynamix.tools`.
@@ -42,6 +45,8 @@ planned for Pre-Alpha 12.
   PEP 561 `py.typed` marker in the library namespace.
 - Reconciled documentation links, method names, branch flow, and the historical
   Postman/OpenAPI boundary.
+- Consolidated `resolve_data_path` into `teamdynamix.tools.data_utils`, removed
+  legacy module exports, and established a single package-level import contract.
 
 ## Known limitations
 
