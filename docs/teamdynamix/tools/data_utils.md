@@ -1,7 +1,7 @@
 # `data_utils` Module
 
 **Module:** `teamdynamix.tools.data_utils`  
-**Purpose:** Shared local data-path and string-normalization helpers
+**Purpose:** Shared local data-path, string-normalization, and file-fingerprint helpers
 
 `data_utils` is the single canonical home for helpers shared by local script
 tooling. It does not import Session, authentication, transport, API clients, or
@@ -36,3 +36,29 @@ quotes.
 
 Maps `None` to an empty string, applies `clean_key` to strings, and converts
 other values with `str()`.
+
+## File fingerprints
+
+`compute_fingerprint(path)` returns an immutable `FileFingerprint` containing
+the absolute resolved path, hash algorithm and digest, nanosecond modification
+time, CSV data-row count, and ordered header columns. By default, identity is
+determined by the digest, columns, row count, and modification time. The path is
+recorded for diagnostics but does not make two otherwise identical files differ.
+
+```python
+from teamdynamix.tools import compute_fingerprint, fingerprints_match
+
+before = compute_fingerprint("input.csv")
+after = compute_fingerprint("input.csv")
+assert fingerprints_match(before, after)
+```
+
+`compare_fingerprint(left, right)` returns a `FingerprintDiff` whose
+`mismatches` map contains `(left, right)` values for each differing field.
+`assert_fingerprint_match(left, right)` raises `FingerprintMismatchError` with
+the same structured mismatch details when identity cannot be established.
+
+The comparison always checks the selected algorithm and the ordered
+`fingerprint_fields` policy, then checks the union of fields declared by both
+fingerprints. `fingerprint_version` is optional and can be included in
+`fingerprint_fields` when a workflow needs version-sensitive identity.
