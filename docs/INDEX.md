@@ -72,3 +72,4 @@ scheduled for `pre-alpha/12`.
 - [`script_utils`](teamdynamix/tools/script_utils.md)
 - [`csv_utils`](teamdynamix/tools/csv_utils.md)
 - [`sqlite_utils`](teamdynamix/tools/sqlite_utils.md)
+- [`migration_utils`](teamdynamix/tools/migration_utils.md)
