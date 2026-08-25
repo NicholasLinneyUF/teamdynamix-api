@@ -23,10 +23,13 @@ planned for Pre-Alpha 12.
 - Added the first `teamdynamix.tools` package with pandas-backed CSV helpers,
   SQLite tracking utilities, canonical data-path/string helpers, and neutral
   command-line parser scaffolding for local scripts.
+- Added immutable source-file fingerprints, field-level mismatch diagnostics,
+  SQLite fingerprint persistence, and fail-closed `new`, `overwrite`, and
+  `resume` migration tracker preparation.
 - Added a distinct local-workflow exception hierarchy: `ToolsError`,
   `FingerprintMismatchError`, `MigrationStateError`, and `DataPathError`.
 - Preserved the established `Session` / `Transport` / `Auth` architecture and
-  centralized JSON Patch handling.
+  centralized JSON Patch handling and API response normalization.
 - Added concise `HttpError` string output without automatically exposing
   response bodies.
 - Added script-specific logger filename prefixes through `Session`.
@@ -52,9 +55,9 @@ planned for Pre-Alpha 12.
 
 - API coverage remains intentionally limited to modules already present in the
   repository.
-- The `teamdynamix.tools` implementation is useful but has correctness,
-  scalability, state-model, and packaging boundaries scheduled for redesign in
-  Pre-Alpha 12.
+- Broader `teamdynamix.tools` scalability, state-model, and packaging boundaries
+  remain scheduled for redesign in Pre-Alpha 12; Pre-Alpha 11 now includes the
+  source-integrity and tracker-lifecycle safeguards required by local migrations.
 - Several existing client modules have only import-level or incidental test
   coverage; the configured 35% project floor records the current baseline
   rather than overstating maturity.

@@ -20,6 +20,12 @@ Python distribution metadata uses the PEP 440 equivalent `0.0.0a11`.
   selection, and path normalization without workflow execution.
 - A distinct `ToolsError` hierarchy for local path, fingerprint, and migration
   state failures.
+- Immutable file fingerprints with configurable identity fields, structured
+  comparisons, and concise mismatch diagnostics.
+- SQLite fingerprint metadata persistence for paths and caller-owned
+  connections.
+- Fail-closed migration tracker preparation with explicit `new`, `overwrite`,
+  and `resume` modes.
 - Script-specific logger filename prefixes exposed through `Session`.
 - README, MIT license, PEP 561 marker, deterministic core tests, and built-wheel
   import smoke tests.
@@ -33,6 +39,8 @@ Python distribution metadata uses the PEP 440 equivalent `0.0.0a11`.
   with the project promotion model.
 - Removed duplicate and legacy `resolve_data_path` implementations and exports;
   the canonical implementation now lives in `teamdynamix.tools.data_utils`.
+- Centralized duplicated API response-shape normalization in a stateless
+  internal module shared by the existing client modules.
 - Set an honest 35% coverage floor; the release suite currently exceeds it.
 
 ### Fixed
