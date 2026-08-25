@@ -68,5 +68,6 @@ scheduled for `pre-alpha/12`.
 
 - [Tools overview](teamdynamix/tools/README.md)
 - [`data_utils`](teamdynamix/tools/data_utils.md)
+- [`script_utils`](teamdynamix/tools/script_utils.md)
 - [`csv_utils`](teamdynamix/tools/csv_utils.md)
 - [`sqlite_utils`](teamdynamix/tools/sqlite_utils.md)
