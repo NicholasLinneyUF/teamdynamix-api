@@ -48,6 +48,7 @@ logger = Logger(
     log_dir="./logs",
     level="INFO",
     console=True,
+    name_prefix="log-mytool",
 )
 ```
 
@@ -55,6 +56,10 @@ Instantiation creates:
 
 - A log directory (if it does not exist)
 - A timestamped log file within that directory
+
+The `name_prefix` parameter controls the text before the timestamp. It defaults
+to `"log"`, preserving filenames such as `log-20260825153000.txt`. A script can
+use a descriptive value such as `"log-mytool"` to make its output identifiable.
 
 No I/O occurs beyond directory creation.
 
