@@ -2,6 +2,11 @@
 
 This directory is the documentation home for the **TeamDynamix API Python SDK**.
 
+These pages describe the `pre-alpha/11` implementation: the final baseline
+derived from the legacy TeamDynamix Postman corpus. They do not claim alignment
+with the subsequently published Swagger/OpenAPI specification; that work is
+scheduled for `pre-alpha/12`.
+
 - Core philosophy: Session is the facade, Transport is the HTTP boundary, client modules are thin endpoint wrappers.
 - Docs style: “JavaDocs-style” module pages under `docs/teamdynamix/`.
 
@@ -9,9 +14,9 @@ This directory is the documentation home for the **TeamDynamix API Python SDK**.
 
 ## Core Architecture & Concepts
 
-- [Architecture](teamdynamix/ARCHITECTURE.md)
-- [Design](teamdynamix/DESIGN.md)
-- [Patterns](teamdynamix/PATTERNS.md)
+- [Architecture](ARCHITECTURE.md)
+- [Design](DESIGN.md)
+- [Patterns](PATTERNS.md)
 
 ---
 
@@ -37,8 +42,8 @@ This directory is the documentation home for the **TeamDynamix API Python SDK**.
 - [`applications`](teamdynamix/applications.md)
   - `Applications.list(...)`, `Applications.get(...)`
 - [`attributes`](teamdynamix/attributes.md)
-  - Attribute choices: `list_choices`, `create_choice`, `edit_choice`, `delete_choice`
-  - Custom attributes: `custom(...)`
+  - Attribute choices: `list_choices(...)`, `add_choice(...)`, `edit_choice(...)`, `delete_choice(...)`
+  - Custom attributes: `list_custom(...)`
 - [`people`](teamdynamix/people.md)
   - `People.get(...)`, `People.get_raw(...)`, `People.search(...)`, `People.user_list(...)`, `People.create(...)`, `People.update(...)`
   - Functional roles: `list_functional_roles(...)`, `add_functional_role(...)`, `remove_functional_role(...)`

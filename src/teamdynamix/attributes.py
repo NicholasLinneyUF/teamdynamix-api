@@ -100,7 +100,7 @@ class AttributeChoice:
     """
     DTO representing an Attribute Choice (selectable options for an Attribute).
 
-    Fields align with the Postman/OpenAPI schema:
+    Fields align with the legacy Postman schema used for pre-alpha/11:
       ID, Name, IsActive, DateCreated, DateModified, Order
     """
 

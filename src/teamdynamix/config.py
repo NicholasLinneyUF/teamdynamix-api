@@ -152,7 +152,7 @@ class Config:
             tenant=tenant,
             environment=environment,
             base_url_override=base_url_override,
-            auth_mode=auth_mode,  # type: ignore[arg-type]
+            auth_mode=auth_mode,
             beid=beid,
             webserviceskey=webserviceskey,
             username=username,

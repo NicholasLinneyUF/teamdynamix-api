@@ -37,10 +37,14 @@ These documents define **non-negotiable constraints**.
 
 ### Long-Lived Branches
 
-| Branch    | Purpose                              |
-| --------- | ------------------------------------ |
-| `main`    | Latest stable or tagged pre-release  |
-| `develop` | Integration branch for upcoming work |
+| Branch | Purpose                                                    |
+| ------ | ---------------------------------------------------------- |
+| `main` | Latest stable or tagged pre-release                        |
+| `dev`  | Downstream-only integration and personal validation branch |
+
+`dev` is branched from `main`. Release snapshots may be pushed down to `dev`
+for intermediate testing, but `dev` is never merged upward into a release
+branch or `main`.
 
 ---
 
@@ -52,8 +56,9 @@ pre-alpha/N
 
 - Used only during Pre-Alpha phase
 - Tagged as `0.0.0-pre-alpha.N`
-- May be rebased or force-pushed
-- Typically merged once, then deleted
+- Acts as the release/integration branch for that pre-alpha corpus
+- Receives issue-scoped pull requests from short-lived feature or bugfix branches
+- Is promoted to `main` only after the full release checklist is complete
 
 ---
 
@@ -61,10 +66,12 @@ pre-alpha/N
 
 feature/
 
-- Branched from `develop`
+- Branched from `main` or the owning release branch when earlier release work is
+  a required dependency
 - Used for new functionality
 - Must not be tagged
-- Merged via pull request
+- Promoted into the owning release branch via pull request
+- Never merges directly to `main` as a substitute for the complete release
 
 ---
 
@@ -73,8 +80,8 @@ feature/
 bugfix/
 
 - Used for non-urgent fixes
-- Branched from `develop` or release branches
-- Merged back to origin branch
+- Branched from `main` or the release branch that owns the issue
+- Promoted into the owning release branch
 
 ---
 
@@ -82,7 +89,8 @@ bugfix/
 
 release/x.y.z
 
-- Branched from `develop`
+- Reserved for Alpha and later release stabilization when deliberately adopted
+- Branched from `main`
 - Used to stabilize a version
 - Tagged sequentially as:
   - `x.y.z-alpha`
@@ -98,7 +106,8 @@ hotfix/x.y.z
 
 - Branched from `main`
 - Used for urgent production fixes
-- Merged into both `main` and `develop`
+- Promoted according to the release process; any downstream copies are refreshed
+  from the corrected upstream branch
 
 ---
 

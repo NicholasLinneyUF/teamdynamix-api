@@ -125,9 +125,14 @@ Update **only** if the corresponding module changed:
 ### Pre-Alpha Releases
 
 - [ ] Ensure work is on `pre-alpha/N` branch
+- [ ] Promote each completed feature branch into `pre-alpha/N` through its own pull request
 - [ ] Ensure branch represents a **feature-complete snapshot**
 - [ ] Merge `pre-alpha/N` → `main` (fast-forward preferred)
 - [ ] Delete branch after merge (optional)
+
+If intermediate integration testing is needed, a release snapshot may be
+pushed down to `dev`. The `dev` branch begins from `main` and is never merged
+upward into a release branch or `main`.
 
 ### Alpha and Later Releases
 

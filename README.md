@@ -18,6 +18,10 @@ python -m pip install .
 
 Python 3.10 or newer is required.
 
+The release label and Git tag are `0.0.0-pre-alpha.11`. Python distribution
+metadata uses the PEP 440 equivalent `0.0.0a11`, which is also exposed as
+`teamdynamix.__version__`.
+
 ## Session logging
 
 `Session` uses `log-<timestamp>.txt` by default. Scripts can provide a
@@ -34,3 +38,7 @@ configured log directory.
 
 See [the documentation index](docs/INDEX.md) for architecture, configuration,
 client, and contributor documentation.
+
+## License
+
+This project is available under the [MIT License](LICENSE).
