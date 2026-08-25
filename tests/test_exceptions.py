@@ -1,4 +1,11 @@
-from teamdynamix.exceptions import HttpError, TdxError
+from teamdynamix.exceptions import (
+    DataPathError,
+    FingerprintMismatchError,
+    HttpError,
+    MigrationStateError,
+    TdxError,
+    ToolsError,
+)
 
 
 def test_http_error_formats_request_context_without_response_body() -> None:
@@ -25,3 +32,18 @@ def test_http_error_preserves_explicit_message_and_exception_hierarchy() -> None
 
     assert str(error) == "Item was not found"
     assert isinstance(error, TdxError)
+
+
+def test_tools_errors_are_distinct_from_api_errors_and_preserve_details() -> None:
+    details = {"expected": "abc", "actual": "def"}
+    error = FingerprintMismatchError("Input fingerprint changed", details=details)
+
+    assert isinstance(error, ToolsError)
+    assert not isinstance(error, TdxError)
+    assert str(error) == "Input fingerprint changed"
+    assert error.details is details
+
+
+def test_tools_error_subclasses_share_the_local_workflow_boundary() -> None:
+    assert isinstance(MigrationStateError("Tracker missing"), ToolsError)
+    assert isinstance(DataPathError("Path missing"), ToolsError)
