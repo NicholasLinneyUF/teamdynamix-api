@@ -32,6 +32,7 @@ scheduled for `pre-alpha/12`.
 - [`logger`](teamdynamix/logger.md)
 - [`event`](teamdynamix/events.md)
 - [`exceptions`](teamdynamix/exceptions.md)
+- [Internal response normalization](teamdynamix/response_normalization.md)
 
 ---
 
